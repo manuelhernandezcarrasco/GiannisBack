@@ -1,9 +1,11 @@
 import express from 'express';
-import { OrderService } from '../../services/order/index';
-import {BurgerService} from '../../services/burger/index';
+import { OrderService } from '../../services/order';
+import {BurgerService} from '../../services/burger';
 import { Sale, ToppingOrder } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
-import { ToppingOrderService } from 'components/services/toppingOrder';
+import { ToppingOrderService } from 'components/services/topping-order';
+import { Validate } from 'validate';
+import { BadRequestError, InternalServerError, NotFoundError } from 'error';
 
 const router = express.Router();
 
@@ -12,13 +14,10 @@ router.post('/', async(req, res) => {
        const { userId } = res.locals;
        const { burgerId, orderPrice, sale } = req.body;
        
-       if (!burgerId || !userId || !orderPrice) {
-           return res.status(400).json('Missing fields');
-       }
-
+        Validate.validateOrderCreateBody(userId, burgerId, orderPrice);
        const burger = await BurgerService.find(burgerId);
        if (!burger) {
-           return res.status(404).json('Burger was not found')
+           throw new NotFoundError('Burger was not found')
        }
 
        const order = await OrderService.create( { burgerId, userId, orderPrice, sale} );
@@ -26,7 +25,7 @@ router.post('/', async(req, res) => {
    }
    catch (e) {
        console.log(e);
-       return res.status(500).json('Internal server error');
+       throw new InternalServerError();
    }
 });
 
@@ -34,13 +33,10 @@ router.put('/', async(req, res) => {
     try {
         const { orderId, orderPrice } = req.body;
 
-        if (!orderId || !orderPrice) {
-            return res.status(400).json('Missing fields');
-        }
-
+        Validate.validateOrderUpdateBody(orderId, orderPrice);
         let order = OrderService.find(orderId);
         if (!order) {
-            return res.status(404).json('Order was not found');
+            throw new NotFoundError('Order was not found');
         }
 
         const toppings = await ToppingOrderService.findMany(orderId);
@@ -49,7 +45,7 @@ router.put('/', async(req, res) => {
     }
     catch (e) {
         console.log(e);
-        return res.status(500).json('Internal server error');
+        throw new InternalServerError();
     }
 
 });
@@ -59,12 +55,12 @@ router.delete('/', async(req, res) => {
        const {orderId}  = req.body;
 
        if (!orderId) {
-           return res.status(400).json('Missing fields');
+           throw new BadRequestError('Missing fields');
        }
 
        let order = await OrderService.find(orderId);
        if (!order) {
-           return res.status(404).json('Order was not found');
+           throw new NotFoundError('Order not found');
        }
 
        order = await OrderService.remove(orderId);
@@ -72,7 +68,7 @@ router.delete('/', async(req, res) => {
    }
    catch (e) {
        console.log(e);
-       return res.status(500).json('Internal server error');
+       throw new InternalServerError();
    }
 });
 

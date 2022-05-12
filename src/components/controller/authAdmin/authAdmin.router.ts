@@ -1,66 +1,110 @@
 import express from "express";
-import {UserService} from "../../services/user/index";
-import {SaleService} from "../../services/sale/index";
+import {UserService} from "../../services/user";
+import {SaleService} from "../../services/sale";
+import { BadRequestError, InternalServerError, NotFoundError } from "error";
 
 const router = express.Router();
 
-router.patch('/createadmin', async(req, res) => {
+router.patch('/create-admin', async(req, res) => {
     try {
         const {userId} = req.body;
 
         if (!userId) {
-            return res.status(400).json('Missing fields');
+            throw new BadRequestError('Missing fields');
         }
 
         const user = await UserService.find(userId);
         if(!user) {
-            return res.status(404).json('Usern not found');
+            throw new NotFoundError('User not found');
         }
 
-        const isAdmin:boolean = true;
-        await UserService.update(userId, {isAdmin} );
+        await UserService.update(userId, {isAdmin:true} );
         return res.status(204);
     }
     catch (e) {
         console.log(e);
-        return res.status(500).json('Internal server error');
+        throw new InternalServerError();
     }
 });
 
-router.get('/unnaccepted', async(req, res) => {
+router.get('/show-sales', async(req, res) => {
     try {
         const sales = await SaleService.getSales();
         if ( sales.length = 0) {
-            res.status(404).json('Sales not found');
+            throw new NotFoundError('Sales not found');
         }
 
         return res.status(200).json(sales);
 
     } catch (e) {
         console.log(e);
-        return res.status(500).json('Internal server error');
+        throw new InternalServerError();
     }
 });
 
-router.put('/manage', async(req, res) => {
+router.patch('/accept', async(req, res) => {
     try {
-        const { saleId, accepted, sent, received } = req.body;
+        const { saleId } = req.body;
  
-        if (!saleId || (accepted || sent || received)) {
-            return res.status(400).json('Missing fields');
+        if (!saleId) {
+            throw new BadRequestError('Missing fields');
         }
  
         let sale = SaleService.find(saleId);
         if(!sale) {
-            return res.status(404).json('sale was not found');
+            throw new NotFoundError('Sales not found');
         }
 
-        sale = SaleService.update( saleId, { accepted, sent, received } );
+        sale = SaleService.update( saleId, {accepted:true} );
         return res.status(200).json(sale);
     }
     catch (e) {
         console.log(e);
-        return res.status(500).json('Internal server error');
+        throw new InternalServerError();
+    }
+ });
+
+ router.patch('/send', async(req, res) => {
+    try {
+        const { saleId } = req.body;
+ 
+        if (!saleId) {
+            throw new BadRequestError('Missing fields');
+        }
+ 
+        let sale = SaleService.find(saleId);
+        if(!sale) {
+           throw new NotFoundError('Sale not found');
+        }
+
+        sale = SaleService.update( saleId, {sent:true} );
+        return res.status(200).json(sale);
+    }
+    catch (e) {
+        console.log(e);
+        throw new InternalServerError();
+    }
+ });
+
+ router.patch('/received', async(req, res) => {
+    try {
+        const { saleId } = req.body;
+ 
+        if (!saleId) {
+            throw new BadRequestError('Missing fields');
+        }
+ 
+        let sale = SaleService.find(saleId);
+        if(!sale) {
+            throw new NotFoundError('sale not found');
+        }
+
+        sale = SaleService.update( saleId, {received:true} );
+        return res.status(200).json(sale);
+    }
+    catch (e) {
+        console.log(e);
+        throw new InternalServerError();
     }
  });
 

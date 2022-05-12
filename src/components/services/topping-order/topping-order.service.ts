@@ -1,17 +1,22 @@
-import { Prisma } from '@prisma/client';
-import { prisma } from '../../../db'
+import { Order, Prisma } from '@prisma/client';
+import { prisma } from '../../../db';
 
 export class ToppingOrderService {
 
-    static findByOrder = (toppingId:number, orderId:number) => {
+    static findMany = (where: Prisma.ToppingOrderWhereInput) => {
         return prisma.toppingOrder.findMany ({
-           where: { toppingId, orderId }
+           where,
         });
     }
 
-    static create = ( data: Prisma.ToppingOrderCreateInput ) => {
+    static create = ( data: Omit<Prisma.ToppingOrderCreateInput, "order"> & {order:Order} ) => {
+        const insertData = {
+            ...data,
+            order: { connect: order => { return {id:order.id} },
+            } 
+        }
         return prisma.toppingOrder.create({
-            data,
+            data: insertData,
         });
     }
 
@@ -20,13 +25,7 @@ export class ToppingOrderService {
             where,
         });
     }
-
-    static findMany = ( orderId:number ) => {
-        return prisma.toppingOrder.findMany({
-            where: {orderId},
-        });
-    }
-
+    
     static update = ( where: Prisma.ToppingOrderWhereUniqueInput, data: Prisma.ToppingOrderUpdateInput ) => {
         return prisma.toppingOrder.update({
             where,

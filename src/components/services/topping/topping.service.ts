@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '../../../db/index'
+import { prisma } from '../../../db';
 
 export class ToppingService {
 

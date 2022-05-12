@@ -1,6 +1,8 @@
 import { Decimal } from '@prisma/client/runtime';
+import { BadRequestError, InternalServerError, NotFoundError } from 'error';
 import express from 'express';
-import { BurgerService } from '../../services/burger/index';
+import { Validate } from 'validate';
+import { BurgerService } from '../../services/burger';
 
 const router = express.Router();
 
@@ -8,13 +10,10 @@ router.put('/', async(req, res) => {
    try {
         const { burgerId, description, price_simple, price_double, price_veggie } = req.body;
 
-        if (!burgerId || (description || price_simple || price_double || price_veggie)) {
-            return res.status(400).json('Missing fields');
-        }
-
+        Validate.validateBurgerUpdateBody(burgerId, description, price_simple, price_double, price_veggie);
         let burger = await BurgerService.find(burgerId);
         if (!burger) {
-            return res.status(404).json('Burger was not found');
+            throw new NotFoundError('Burger not found');
         }
 
         burger = await  BurgerService.update( burgerId, { description, price_simple, price_double, price_veggie });
@@ -22,7 +21,7 @@ router.put('/', async(req, res) => {
    }
    catch (e) {
        console.log(e);
-       return res.status(500).json('Internal server error');
+       throw new InternalServerError();
    }
 });
 
@@ -31,12 +30,12 @@ router.delete('/', async(req, res) => {
         const {burgerId} = req.body;
 
         if (!burgerId) {
-            return res.status(400).json('Missing fields');
+            throw new BadRequestError('Missing fields');
         }
 
         const burger = await BurgerService.find(burgerId);
         if (!burger) {
-            return res.status(404).json('Burger was no found');
+            throw new NotFoundError('Burger no found');
         }
 
         await BurgerService.remove(burgerId);
@@ -44,7 +43,7 @@ router.delete('/', async(req, res) => {
    }
    catch (e) {
        console.log(e);
-       return res.status(500).json('Internal server error');
+       throw new InternalServerError();
    }
 });
 
@@ -52,21 +51,16 @@ router.post('/', async(req, res) => {
    try {
         const { name, description, price_simple, price_double, price_veggie } = req.body;
 
-       if (!name || !description) {
-           return  res.status(400).json('Missing fields');
+       if (!name) {
+           throw new BadRequestError('Missing fields');
        }
 
-       let burger = await BurgerService.find(name);
-       if (burger) {
-            return res.status(409).json('Burger with name already exists');
-       }
-
-       burger = await BurgerService.create({ name, description, price_simple, price_double, price_veggie});
+       const burger = await BurgerService.create({ name, description, price_simple, price_double, price_veggie});
        return res.status(201).json(burger);
    }
    catch (e) {
        console.log(e);
-       return res.status(500).json('Internal server error');
+       throw new InternalServerError();
    }
 });
 

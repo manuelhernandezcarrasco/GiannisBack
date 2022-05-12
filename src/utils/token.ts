@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const generateAccessToken = (data) => {
+const generateAccessToken = (data:number) => {
     const payload = {
         data,
     }
@@ -8,7 +8,7 @@ const generateAccessToken = (data) => {
     return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
 }
 
-const validateAccessToken = (token) => {
+const validateAccessToken = (token:string) => {
     try {
         return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     } catch (e) {

@@ -1,5 +1,5 @@
 import { Order, Prisma, ToppingOrder } from '@prisma/client';
-import { prisma } from '../../../db/index'
+import { prisma } from '../../../db'
 
 export class OrderService {
 
@@ -45,9 +45,9 @@ export class OrderService {
         });
     }
 
-    static getOrders = ( userId:number ) => {
+    static findMany = ( where: Prisma.OrderWhereInput ) => {
         return prisma.order.findMany({
-            where: {userId, active : true}
+            where,
         });
     }
 

@@ -1,14 +1,14 @@
 import express from 'express';
 
-import { router as userRouter } from '../components/controller/user/index';
-import { router as userAuthRouter } from '../components/controller/authUser/index';
-import { router as menuRouter } from '../components/controller/menu/index';
-import { router as burgerRouter } from '../components/controller/burger/index';
-import { router as toppingRouter } from '../components/controller/topping/index';
-import { router as orderRouter } from '../components/controller/order/index';
-import { router as toppingOrderRouter } from '../components/controller/toppingOrder/index';
-import { router as saleRouter } from '../components/controller/sale/index';
-import { router as adminRouter } from '../components/controller/authAdmin/authAdmin.router';
+import { router as userRouter } from '../components/controller/user';
+import { router as userAuthRouter } from '../components/controller/authUser';
+import { router as menuRouter } from '../components/controller/menu';
+import { router as burgerRouter } from '../components/controller/burger';
+import { router as toppingRouter } from '../components/controller/topping';
+import { router as orderRouter } from '../components/controller/order';
+import { router as toppingOrderRouter } from '../components/controller/topping-order';
+import { router as saleRouter } from '../components/controller/sale';
+import { router as adminRouter } from '../components/controller/authAdmin';
 import { withAuth, authAdmin } from "../middlewares/authenticate";
 
 const router = express.Router();

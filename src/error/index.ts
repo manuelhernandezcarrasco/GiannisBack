@@ -38,7 +38,7 @@ export class MethodNotAllowedError extends ApiError {
 }
 
 export class InternalServerError extends ApiError {
-    constructor(message: string) {
-        super(message, 500);
+    constructor() {
+        super('Internal server error', 500);
     }
 }

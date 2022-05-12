@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '../../../db'
+import { prisma } from '../../../db';
 import { hashPassword, validatePassword } from '../../../utils/password';
 import { generateAccessToken } from '../../../utils/token';
 
@@ -41,7 +41,7 @@ export class UserService {
 
         delete user.password;
 
-        const token = generateAccessToken({ userId: user.id });
+        const token = generateAccessToken( user.id );
         return { user, token };
     }
 }

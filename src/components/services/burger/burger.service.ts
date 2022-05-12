@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '../../../db/index'
+import { prisma } from '../../../db'
 
 export class BurgerService {
 
@@ -32,5 +32,10 @@ export class BurgerService {
         return prisma.burger.findMany();
     }
 
+    static findMany = ( where: Prisma.BurgerWhereInput) => {
+        return prisma.burger.findMany({
+            where,
+        });
+    }
 
 }

@@ -1,7 +1,8 @@
 import { Order } from '@prisma/client';
+import { BadRequestError, InternalServerError } from 'error';
 import express from 'express';
 import { OrderService } from '../../services/order/order.service';
-import {SaleService} from '../../services/sale/index';
+import {SaleService} from '../../services/sale';
 
 const router = express.Router();
 
@@ -11,17 +12,17 @@ router.post('/', async(req, res) => {
         const { total } = req.body;
 
         if  (!total) {
-            return res.status(400).json('Missing fields');
+            throw new BadRequestError('Missing fields');
         }
         
-        const orders = await OrderService.getOrders(userId);
+        const orders = await OrderService.findMany({userId, active:true});
         const sale = await SaleService.create( { userId, orders, total } );
         await OrderService.updateMany(orders);
         return res.status(201).json(sale);
     }
     catch (e) {
         console.log(e);
-        return res.status(500).json('Internal server error');
+        throw new InternalServerError();
     }
 });
 

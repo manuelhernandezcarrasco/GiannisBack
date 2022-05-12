@@ -1,45 +1,46 @@
 import express from 'express';
-import { ToppingOrderService } from '../../services/toppingOrder/index';
-import {ToppingService} from "../../services/topping/index";
+import { ToppingOrderService } from '../../services/topping-order';
+import {ToppingService} from "../../services/topping";
+import { Validate } from 'validate';
+import { OrderService } from 'components/services/order';
+import { notDeepEqual } from 'assert';
+import { BadRequestError, InternalServerError, NotFoundError } from 'error';
 
 const router = express.Router();
 
 router.post('/', async(req, res) => {
    try {
-        const { toppingId, quantity, order, toppingOrderPrice } = req.body;
-        if (!toppingId || !quantity || !order || !toppingOrderPrice) {
-            return res.status(400).json('Missing fields');
-        }
+        const { toppingId, quantity, orderId, toppingOrderPrice } = req.body;
 
+        Validate.validatetoppingOrderCreateBody(toppingId, quantity, orderId, toppingOrderPrice);
         const topping = await ToppingService.find( toppingId );
         if (!topping) {
-            return res.status(404).json('Topping was not found');
+            throw new NotFoundError('Topping not found');
         }
 
-        const orders = await ToppingOrderService.findByOrder( toppingId, order );
+        const orders = await ToppingOrderService.findMany( {toppingId, orderId} );
         if (orders) {
-            return res.status(400).json('toppingOrder already exists');
+            throw new BadRequestError('toppingOrder already exists');
         }
         
+        const order = await OrderService.find(orderId);
         const toppingOrder = await ToppingOrderService.create({ toppingId, quantity, order, toppingOrderPrice });
         return res.status(201).json(toppingOrder);
    }
    catch (e) {
        console.log(e);
-       return res.status(500).json('Internal server error');
+       throw new InternalServerError();
    }
 });
 
-router.patch('/', async(req, res) => {
+router.put('/', async(req, res) => {
     try {
         const {toppingOrderId, quantity, toppingOrderPrice} = req.body;
-        if (!toppingOrderId || !quantity || !toppingOrderPrice) {
-            return res.status(400).json('Missing fields');
-        }
-
+        
+        Validate.validateToppingOrderUpdateBody(toppingOrderId, quantity, toppingOrderPrice);
         let toppingOrder = await ToppingOrderService.find(toppingOrderId);
         if (!toppingOrder) {
-            return res.status(404).json('Order was not found');
+            throw new NotFoundError('Order was not found');
         }
 
         toppingOrder = await ToppingOrderService.update( toppingOrderId, {quantity, toppingOrderPrice} );
@@ -47,7 +48,7 @@ router.patch('/', async(req, res) => {
     }
     catch (e) {
         console.log(e);
-        return res.status(500).json('Internal server error');
+        throw new InternalServerError();
     }
 });
 
@@ -55,12 +56,12 @@ router.delete('/', async(req, res) => {
     try {
         const { toppingOrderId } = req.body;
         if (!toppingOrderId) {
-            return res.status(400).json('Missing fields');
+            throw new BadRequestError('Missing fields');
         }
 
         let toppingOrder = await ToppingOrderService.find(toppingOrderId);
         if (!toppingOrder) {
-            return res.status(404).json('Order was not found');
+            throw new NotFoundError('Order was not found');
         }
 
         toppingOrder = await ToppingOrderService.remove(toppingOrderId);
@@ -68,7 +69,7 @@ router.delete('/', async(req, res) => {
     }
     catch (e) {
         console.log(e);
-        return res.status(500).json('Internal server error');
+        throw new InternalServerError();
     }
 });
 

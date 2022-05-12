@@ -1,6 +1,6 @@
 import { Order, Prisma } from '@prisma/client';
-import { prisma } from '../../../db/index'
-import {OrderService} from "../order/index";
+import { prisma } from '../../../db'
+import {OrderService} from "../order";
 
 export class SaleService {
 
