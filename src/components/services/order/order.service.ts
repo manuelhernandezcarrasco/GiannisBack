@@ -1,11 +1,16 @@
-import { Order, Prisma, ToppingOrder } from '@prisma/client';
+import { Order, Prisma, Sale, ToppingOrder } from '@prisma/client';
 import { prisma } from '../../../db'
 
 export class OrderService {
 
-    static create = ( data: Prisma.OrderCreateInput ) => {
+    static create = ( data: Omit<Prisma.OrderCreateInput, "sale"> & {sale:Sale} ) => {
+        const insetData = {
+            ...data,
+            sale: { connect: (sale: { id: any; }) => { return {id:sale.id} },
+            }
+        }    
         return prisma.order.create({
-            data,
+            data: insetData,
         });
     }
 

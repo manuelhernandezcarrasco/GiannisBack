@@ -10,15 +10,13 @@ router.get('/burgers', async(req, res) => {
     try {
         const { pattern } = req.body;
         let burgers:Burger[] = undefined;
+
         if (!pattern) {
             burgers = await BurgerService.getBurgers();
         }else {
-            burgers = await BurgerService.findMany(pattern);
+            burgers = await BurgerService.findMany({name:pattern});
         }
 
-        if(!burgers) {
-            throw new NotFoundError('Burgers not found');
-        }
         return res.status(200).json(burgers);
     }
     catch (e) {
@@ -29,11 +27,9 @@ router.get('/burgers', async(req, res) => {
 
 router.get('/toppings', async(req, res) => {
     try {
+        
         const toppings = await ToppingService.getToppings();
-        if (!toppings.length) {
-            throw new NotFoundError('Toppings were not found');
-        }
-
+    
         return res.status(200).json(toppings);
     }
     catch (e) {

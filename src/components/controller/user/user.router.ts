@@ -1,6 +1,6 @@
 import { BadRequestError, InternalServerError, UnauthenticatedError } from 'error';
 import express from 'express';
-import { Validate } from 'validate';
+import { UserValidator } from '../../../validate/user-validator';
 import { UserService } from '../../services/user';
 
 const router = express.Router();
@@ -9,7 +9,7 @@ router.post('/signup', async (req, res) => {
     try {
         const { name, email, password, phone } = req.body;
 
-        Validate.validateUserCreateBody(name, email, password, phone);
+        UserValidator.validateUserCreateBody(name, email, password, phone);
         const user = await UserService.create({ name, email, password, phone });
         return res.status(201).json(user);
     } catch (e) {

@@ -18,9 +18,9 @@ router.use('/user', userRouter);
 router.use('/menu', menuRouter);
 
 // user auth logs
-router.use('/authuser', withAuth, userAuthRouter);
+router.use('/auth-user', withAuth, userAuthRouter);
 router.use('/order', withAuth, orderRouter);
-router.use('/toppingorder', withAuth, toppingOrderRouter);
+router.use('/topping-order', withAuth, toppingOrderRouter);
 router.use('/sale', withAuth, saleRouter);
 
 // admin auth logs

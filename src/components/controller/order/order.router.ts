@@ -1,25 +1,25 @@
 import express from 'express';
 import { OrderService } from '../../services/order';
 import {BurgerService} from '../../services/burger';
-import { Sale, ToppingOrder } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
-import { ToppingOrderService } from 'components/services/topping-order';
-import { Validate } from 'validate';
+import { ToppingOrderService } from '../../../components/services/topping-order';
+import { OrderValidator } from '../../../validate/order-validator';
 import { BadRequestError, InternalServerError, NotFoundError } from 'error';
+import { SaleService } from '../../../components/services/sale';
 
 const router = express.Router();
 
 router.post('/', async(req, res) => {
    try {
        const { userId } = res.locals;
-       const { burgerId, orderPrice, sale } = req.body;
+       const { burgerId, orderPrice, saleId } = req.body;
        
-        Validate.validateOrderCreateBody(userId, burgerId, orderPrice);
+        OrderValidator.validateOrderCreateBody(userId, burgerId, orderPrice);
        const burger = await BurgerService.find(burgerId);
        if (!burger) {
            throw new NotFoundError('Burger was not found')
        }
 
+       const sale = await SaleService.find(saleId);
        const order = await OrderService.create( { burgerId, userId, orderPrice, sale} );
        return res.status(201).json(order);
    }
@@ -33,7 +33,7 @@ router.put('/', async(req, res) => {
     try {
         const { orderId, orderPrice } = req.body;
 
-        Validate.validateOrderUpdateBody(orderId, orderPrice);
+        OrderValidator.validateOrderUpdateBody(orderId, orderPrice);
         let order = OrderService.find(orderId);
         if (!order) {
             throw new NotFoundError('Order was not found');

@@ -1,9 +1,8 @@
 import express from 'express';
 import { ToppingOrderService } from '../../services/topping-order';
 import {ToppingService} from "../../services/topping";
-import { Validate } from 'validate';
-import { OrderService } from 'components/services/order';
-import { notDeepEqual } from 'assert';
+import { ToppingOrderValidator } from '../../../validate/topping-order-validator';
+import { OrderService } from '../../../components/services/order';
 import { BadRequestError, InternalServerError, NotFoundError } from 'error';
 
 const router = express.Router();
@@ -12,7 +11,7 @@ router.post('/', async(req, res) => {
    try {
         const { toppingId, quantity, orderId, toppingOrderPrice } = req.body;
 
-        Validate.validatetoppingOrderCreateBody(toppingId, quantity, orderId, toppingOrderPrice);
+        ToppingOrderValidator.validatetoppingOrderCreateBody(toppingId, quantity, orderId, toppingOrderPrice);
         const topping = await ToppingService.find( toppingId );
         if (!topping) {
             throw new NotFoundError('Topping not found');
@@ -37,7 +36,7 @@ router.put('/', async(req, res) => {
     try {
         const {toppingOrderId, quantity, toppingOrderPrice} = req.body;
         
-        Validate.validateToppingOrderUpdateBody(toppingOrderId, quantity, toppingOrderPrice);
+        ToppingOrderValidator.validateToppingOrderUpdateBody(toppingOrderId, quantity, toppingOrderPrice);
         let toppingOrder = await ToppingOrderService.find(toppingOrderId);
         if (!toppingOrder) {
             throw new NotFoundError('Order was not found');

@@ -1,7 +1,6 @@
-import { Decimal } from '@prisma/client/runtime';
 import { BadRequestError, InternalServerError, NotFoundError } from 'error';
 import express from 'express';
-import { Validate } from 'validate';
+import { BurgerValidator } from '../../../validate/burger-validator';
 import { BurgerService } from '../../services/burger';
 
 const router = express.Router();
@@ -10,7 +9,7 @@ router.put('/', async(req, res) => {
    try {
         const { burgerId, description, price_simple, price_double, price_veggie } = req.body;
 
-        Validate.validateBurgerUpdateBody(burgerId, description, price_simple, price_double, price_veggie);
+        BurgerValidator.validateBurgerUpdateBody(burgerId, description, price_simple, price_double, price_veggie);
         let burger = await BurgerService.find(burgerId);
         if (!burger) {
             throw new NotFoundError('Burger not found');

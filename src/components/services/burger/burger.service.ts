@@ -32,7 +32,7 @@ export class BurgerService {
         return prisma.burger.findMany();
     }
 
-    static findMany = ( where: Prisma.BurgerWhereInput) => {
+    static findMany = ( where: Prisma.BurgerWhereInput ) => {
         return prisma.burger.findMany({
             where,
         });

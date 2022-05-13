@@ -1,6 +1,6 @@
 import { Order, Prisma } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime';
 import { prisma } from '../../../db'
-import {OrderService} from "../order";
 
 export class SaleService {
 
@@ -31,6 +31,12 @@ export class SaleService {
             where, 
             data,
         });
+    }
+
+    static getTotal = (orders:Order[]) => {
+        let total:Decimal = undefined;
+        orders.map(order => total.add(order.orderPrice));
+        return total;
     }
 
 }
