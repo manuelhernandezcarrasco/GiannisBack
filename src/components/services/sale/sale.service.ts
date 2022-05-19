@@ -1,6 +1,7 @@
 import { Order, Prisma } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
-import { DecipherCCM } from 'crypto';
+import { DecipherCCM, sign } from 'crypto';
+import { resourceLimits } from 'worker_threads';
 import { prisma } from '../../../db'
 
 export class SaleService {
@@ -21,10 +22,61 @@ export class SaleService {
         });
     }
 
-    static getSales = () => {
+    static getSales = (id?:number, userId?:string, limit?:number, skip?:number) => {
         return prisma.sale.findMany({
-            where: { accepted : false}
-        });
+            skip: skip,
+            take:limit,
+            where: { 
+                OR: [{
+                    id: id,
+                    userId: userId
+                }]
+            }
+        })
+    }
+
+    static getSalesByState = (accepted?:boolean, sent?:boolean, received?:boolean, limit?: number, skip?: number) => {
+        return prisma.sale.findMany({
+            skip:skip,
+            take:limit,
+            where: {
+                OR: [{
+                    accepted:accepted,
+                    sent:sent,
+                    received:received
+                }]
+            }
+        })
+    }
+
+    static getGreaterSales = (price?:Decimal, limit?:number, skip?:number) => {
+        return prisma.sale.findMany({
+            skip: skip,
+            take: limit,
+            orderBy: {
+                total: 'desc'
+            },
+            where: { 
+                total: {
+                    gt: price
+                }
+            } 
+        })
+    }
+
+    static getSmallerSales = (price?:Decimal, limit?:number, skip?:number) => {
+        return prisma.sale.findMany({
+            skip:skip,
+            take:-limit,
+            orderBy: {
+                total: 'asc'
+            },
+            where: {
+                total: {
+                    lt: price
+                }
+            }
+        })
     }
 
     static update = ( where: Prisma.SaleWhereUniqueInput, data: Prisma.SaleUpdateInput) => {

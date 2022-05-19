@@ -2,6 +2,7 @@ import express from "express";
 import {UserService} from "../../services/user";
 import {SaleService} from "../../services/sale";
 import { BadRequestError, InternalServerError, NotFoundError } from "error";
+import { Sale } from "@prisma/client";
 
 const router = express.Router();
 
@@ -27,10 +28,48 @@ router.patch('/create-admin', async(req, res) => {
     }
 });
 
-router.get('/show-sales', async(req, res) => {
+router.get('/users/:limit', async(req, res) => {
     try {
-        const sales = await SaleService.getSales();
-        return res.status(200).json(sales);
+        const { limit } = req.params
+        const { pattern, skip } = req.body
+
+        const users = await UserService.getUsers(pattern, pattern, pattern, Number(limit), Number(skip))
+
+        return res.status(200).json({
+            result: users,
+            currentPage: Number(limit)%Number(skip),
+            maxPage: users.length%Number(limit)
+        })
+
+    } catch (e) {
+        console.log(e)
+        throw new InternalServerError()
+    }
+})
+
+router.get('/sales/:limit', async(req, res) => {
+    try {
+        const { limit } = req.params
+        const { pattern, skip, accepted, sent, received, sort} = req.body
+        
+        let sales:Sale[] = undefined
+        if (accepted || sent || received) {
+            sales = await SaleService.getSalesByState(accepted, sent, received, Number(limit), Number(skip))
+        } if (Number(pattern)) {
+            if(sort) {
+                sales = await SaleService.getGreaterSales(pattern, Number(limit), Number(skip))
+            } else {
+                sales = await SaleService.getSmallerSales(pattern, Number(limit), Number(skip))
+            }
+        } else {
+            sales = await SaleService.getSales(pattern, pattern, Number(limit), Number(skip))
+        }
+
+        return res.status(200).json({
+            result: sales,
+            currentPage: Number(limit)%Number(skip),
+            maxPage: sales.length%Number(pattern)
+        });
 
     } catch (e) {
         console.log(e);

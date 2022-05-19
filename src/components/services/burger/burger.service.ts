@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime';
 import { prisma } from '../../../db'
 
 export class BurgerService {
@@ -28,8 +29,46 @@ export class BurgerService {
         });
     }
 
-    static getBurgers = () => {
-        return prisma.burger.findMany();
+    static getBurgers = (name?:string, description?:string, limit?:number, skip?: number) => {
+        return prisma.burger.findMany({
+            skip: skip,
+            take:limit,
+            where: { 
+                OR: [{
+                    name: {
+                        contains: name
+                    },
+                    description: {
+                        contains:description
+                    }
+                }]
+            }
+        });
+    }
+
+    static getByPrice = (price?: number, limit?:number, skip?:number) => {
+        return prisma.burger.findMany({
+            skip: skip,
+            take:-limit,
+            orderBy: {
+                price_simple: 'asc',
+                price_double: 'asc',
+                price_veggie: 'asc'
+            },
+            where: { 
+                OR: [{
+                    price_simple: {
+                        lt: price
+                    },
+                    price_double: {
+                        lt: price
+                    },
+                    price_veggie: {
+                        lt: price
+                    }
+                }]
+            } 
+        })
     }
 
     static findMany = ( where: Prisma.BurgerWhereInput ) => {

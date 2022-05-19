@@ -4,7 +4,6 @@ import { ToppingService } from "../../topping"
 describe('topping', () => {
     
     it('create', async() => {
-        await clearDB()
         // setup
 
         // action
@@ -14,11 +13,11 @@ describe('topping', () => {
         })
 
         //assert
+        await clearDB()
         expect(topping).toBeTruthy()
     })
 
     it('update', async() => {
-        await clearDB()
         // setup
         let topping = await ToppingService.create({
             name: "topping",
@@ -33,10 +32,10 @@ describe('topping', () => {
 
         //assert
         expect(Number(topping.price)).toBe(20)
+        await clearDB()
     })
 
     it('remove', async() => {
-        await clearDB()
         // setup
         let topping = await ToppingService.create({
             name: "topping",
@@ -49,6 +48,7 @@ describe('topping', () => {
         topping = await ToppingService.find({id:topping.id})
 
         //assert
+        await clearDB()
         expect(topping).toBeFalsy()
     })
 

@@ -8,7 +8,6 @@ import { clearDB } from "../../../../__tests__/setup.integration"
 
 describe('order', () => {
     it('create', async () => {
-        await clearDB()
         // setup
         const createdBurger = await BurgerService.create({
             name: "burger",
@@ -31,21 +30,21 @@ describe('order', () => {
         })
 
         // assert
+        await clearDB()
         expect(createdOrder).toBeTruthy()
     })
 
     it('update', async () => {
-        await clearDB()
         // setup
         const createdBurger = await BurgerService.create({
-            name: "burger",
+            name: "burgerr",
             description: "aaaa",
             price_simple: 100.0,
             price_double: 100.0
         })
     
         const createdUser = await UserService.create({
-            email:"manu",
+            email:"manuu",
             name:"name",
             password: "1234",
             phone: 12351241242
@@ -58,7 +57,7 @@ describe('order', () => {
         })
 
         const createdTopping = await ToppingService.create({
-            name:"topping",
+            name:"toppingggggggggggggggggggggggggggggggggggggggggggggggggggggg",
             price:10.0
         })
 
@@ -87,21 +86,21 @@ describe('order', () => {
         const order = await OrderService.update( {id:createdOrder.id}, { toppings:toppings, orderPrice:140.0} );
         
         // assert
+        await clearDB()
         expect(Number(order.orderPrice)).toBe(140)
     })
 
     it('remove', async () => {
-        await clearDB()
         // setup
         const createdBurger = await BurgerService.create({
-            name: "burger",
+            name: "burgerrr",
             description: "aaaa",
             price_simple: 100.0,
             price_double: 100.0
         })
     
         const createdUser = await UserService.create({
-            email:"manu",
+            email:"maaaaaaaaaaaaaaaaaaaaaaaaaanuuu",
             name:"name",
             password: "1234",
             phone: 12351241242
@@ -119,6 +118,7 @@ describe('order', () => {
         const order = await OrderService.find({id:createdOrder.id})
 
         // assert
+        await clearDB()
         expect(order).toBeFalsy()
     })
     

@@ -6,18 +6,24 @@ import { Burger } from '@prisma/client';
 
 const router = express.Router();
 
-router.get('/burgers', async(req, res) => {
+router.get('/burgers/:limit', async(req, res) => {
     try {
-        const { pattern } = req.body;
-        let burgers:Burger[] = undefined;
-
-        if (!pattern) {
-            burgers = await BurgerService.getBurgers();
-        }else {
-            burgers = await BurgerService.findMany({name:pattern});
+        const { pattern, skip } = req.body;
+        const { limit } = req.params;
+        
+        let burgers:Burger[] = undefined
+        if(Number(pattern)) {
+            burgers = await BurgerService.getByPrice(pattern, Number(limit), Number(skip))
+        }
+        else {
+            burgers = await BurgerService.getBurgers(pattern, pattern, Number(limit), Number(skip));
         }
 
-        return res.status(200).json(burgers);
+        return res.status(200).json({
+            result: burgers,
+            currentPage: Number(limit)%Number(skip),
+            maxPage: burgers.length%Number(limit)
+        });
     }
     catch (e) {
         console.log(e);

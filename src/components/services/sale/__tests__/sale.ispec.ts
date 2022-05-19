@@ -1,3 +1,4 @@
+import { Order } from "@prisma/client"
 import { clearDB } from "../../../../__tests__/setup.integration"
 import { BurgerService } from "../../burger"
 import { OrderService } from "../../order"
@@ -8,7 +9,6 @@ import { SaleService } from "../sale.service"
 
 describe('sale', () => {
     it('create', async () => {
-        await clearDB()
         // setup
         const createdUser = await UserService.create({
             name: "manu",
@@ -28,7 +28,7 @@ describe('sale', () => {
         })
 
         const createdTopping = await ToppingService.create({
-            name:"topping",
+            name:"toppinnnnnnnnng",
             price: 10.0
         })
 
@@ -54,13 +54,13 @@ describe('sale', () => {
 
         })
 
-        createdOrder2 = await OrderService.update(
+        const order = await OrderService.update(
             {id:createdOrder2.id},
             {toppings:toppings,
             orderPrice: 40.0}
         )
 
-        const orders = [createdOrder, createdOrder2]
+        const orders = [createdOrder, order]
 
         const total = SaleService.getTotal(orders)
 
@@ -72,34 +72,34 @@ describe('sale', () => {
         })
 
         // assert
+        await clearDB()
         expect(createdSale).toBeTruthy()
     })
 
     it('update', async () => {
-        await clearDB()
         // setup
         const createdUser = await UserService.create({
             name: "manu",
-            email:"manu",
+            email:"mannnnnnuu",
             password:"manu",
             phone: 123
         })
 
         const createdBurger = await BurgerService.create({
-            name:"burger1",
+            name:"burger11",
             price_simple: 20.0,
         })
 
         const createdBurger2 = await BurgerService.create({
-            name:"burger2",
+            name:"burger22",
             price_simple:20.0
         })
 
         const createdTopping = await ToppingService.create({
-            name:"topping",
+            name:"toppinnnnngg",
             price: 10.0
         })
-
+        
         let createdOrder2 = await OrderService.create({
             userId: createdUser.id,
             burgerId: createdBurger2.id,
@@ -145,40 +145,59 @@ describe('sale', () => {
         )
 
         // assert
+        await clearDB()
         expect(sale.received).toBeTruthy()
     })
 
     it('getSales', async() => {
-        await clearDB()
         // setup
         const createdUser = await UserService.create({
-            name:"manu",
-            email:"manu",
+            name:"manuuu",
+            email:"manuuu",
             password:"manu",
             phone:123
         })
 
         const createdUser2 = await UserService.create({
             name:"manu",
-            email:"manuu",
+            email:"manuuuu",
             password:"manu",
             phone:123
         })
+
+        const createdBurger = await BurgerService.create({
+            name:"bbbbbbbrrrrrrger",
+            price_simple:100.0
+        })
+
+        const createdOrder = await OrderService.create({
+            userId: createdUser.id,
+            burgerId: createdBurger.id
+        })
+
+        const createdOrder2 = await OrderService.create({
+            userId:createdUser2.id,
+            burgerId:createdBurger.id
+        })
     
+        const orders:Order[] = [createdOrder]
+        const orders2:Order[] = [createdOrder2]
+
         const createdSale = await SaleService.create({
             userId:createdUser.id,
-            orders: undefined
+            orders: orders
         })
 
         const createdSale2 = await SaleService.create({
             userId: createdUser2.id,
-            orders: undefined
+            orders: orders2
         })
 
         // action
         const sales = await SaleService.getSales()
 
         //assert
-        expect(sales).toBeTruthy()
+        await clearDB()
+        expect(sales.length).toBe(2)
     })
 })   

@@ -8,7 +8,6 @@ import { clearDB } from "../../../../__tests__/setup.integration"
 describe('topping-order', () => {
 
     it('create', async() => {
-        await clearDB()
         // setup
         const createdTopping = await ToppingService.create({
             name:"topping",
@@ -17,7 +16,7 @@ describe('topping-order', () => {
 
         const createdUser = await UserService.create({
             name:"manu",
-            email:"manu",
+            email:"maaaaaaaaanciwnu",
             password:"manu",
             phone:123
         })
@@ -41,26 +40,26 @@ describe('topping-order', () => {
         })
         
         //assert
+        await clearDB()
         expect(createdToppingOrder).toBeTruthy()
     })
 
     it('update', async() => {
-        await clearDB()
         // setup
         const createdTopping = await ToppingService.create({
-            name:"topping",
+            name:"toppingg",
             price:10.0
         })
 
         const createdUser = await UserService.create({
             name:"manu",
-            email:"manu",
+            email:"manuu",
             password:"manu",
             phone:123
         })
 
         const createdBurger = await BurgerService.create({
-            name:"burger",
+            name:"burgerr",
             price_simple:100.0
         })
 
@@ -83,27 +82,26 @@ describe('topping-order', () => {
         )
         
         // assert
+        await clearDB()
         expect(createdToppingOrder.quantity).toBe(3)
-
     })
 
     it('remove', async() => {
-        await clearDB()
         // setup
         const createdTopping = await ToppingService.create({
-            name:"topping",
+            name:"toppinggg",
             price:10.0
         })
 
         const createdUser = await UserService.create({
             name:"manu",
-            email:"manu",
+            email:"manuuuu",
             password:"manu",
             phone:123
         })
 
         const createdBurger = await BurgerService.create({
-            name:"burger",
+            name:"burgerrr",
             price_simple:100.0
         })
 
@@ -124,31 +122,31 @@ describe('topping-order', () => {
         createdToppingOrder = await ToppingOrderService.find({id:createdToppingOrder.id})
 
         // assert
+        await clearDB()
         expect(createdToppingOrder).toBeFalsy()
     })
 
     it('remove', async() => {
-        await clearDB()
         // setup
         const createdTopping = await ToppingService.create({
-            name:"topping",
+            name:"toppingggggg",
             price:10.0
         })
 
         const createdTopping2 = await ToppingService.create({
-            name:"topping2",
+            name:"topping222",
             price:10.0
         })
 
         const createdUser = await UserService.create({
             name:"manu",
-            email:"manu",
+            email:"mannnnnnnnnnuuuuuuuuu",
             password:"manu",
             phone:123
         })
 
         const createdBurger = await BurgerService.create({
-            name:"burger"
+            name:"burgerrrrrrrrrr"
         })
 
         const createdOrder = await OrderService.create({
@@ -176,6 +174,7 @@ describe('topping-order', () => {
         })
 
         // assert
+        await clearDB()
         expect(toppingOrders.length).toBe(2)
     })
 })

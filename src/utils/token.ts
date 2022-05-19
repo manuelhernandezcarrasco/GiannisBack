@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-const generateAccessToken = (data:number) => {
+const generateAccessToken = (data:string) => {
     const payload = {
         data,
     }

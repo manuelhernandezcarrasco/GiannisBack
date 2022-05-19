@@ -3,7 +3,6 @@ import { UserService } from "../../user"
 
 describe('user', () => {
     it('login', async () => {
-        await clearDB()
         // setup
         const createdUser = await UserService.create({
             email: "manu",
@@ -16,11 +15,11 @@ describe('user', () => {
         const response = await UserService.login("manu", "manu")
     
         // assert
+        await clearDB()
         expect(response.user.id).toBe(createdUser.id)
     })
     
     it('create', async () => {
-        await clearDB()
         // setup
 
         // action
@@ -32,29 +31,29 @@ describe('user', () => {
         })
     
         // assert
+        await clearDB()
         expect(createdUser).toBeTruthy()
     })
     
     it('update', async() => {
-        await clearDB()
-        const createdUser = await UserService.create({
-            email: "manu",
+        let createdUser = await UserService.create({
+            email: "manuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",
             password: "manu",
             name: "manu",
             phone: 6782178
         })
         
-        const user = await UserService.update({id:createdUser.id}, {password:"manuu"});
+        createdUser = await UserService.update({id:createdUser.id}, {password:"manuu"});
         
-        expect(user.password).toBe("manuu")
+        await clearDB()
+        expect(createdUser.password).toBe("manuu")
     })
 
     it('delete', async() => {
-        await clearDB()
         // setup
         const createdUser = await UserService.create({
             name:"manu",
-            email:"manu",
+            email:"manuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",
             password:"manu",
             phone:123
         })
@@ -64,6 +63,7 @@ describe('user', () => {
         const user = await UserService.find({id:createdUser.id})
 
         //assert
+        await clearDB()
         expect(user).toBeFalsy()
     })
 })

@@ -31,6 +31,26 @@ export class UserService {
         return prisma.user.delete({
             where,
         });
+    } 
+
+    static getUsers = (id?:string, name?: string, email?: string, limit?: number, skip?:number) => {
+        return prisma.user.findMany({
+            skip: skip,
+            take:limit,
+            where: { 
+                OR: [{
+                    id: {
+                        contains: id
+                    },
+                    name: {
+                        contains: name
+                    },
+                    email: {
+                        contains: email
+                    }
+                }]
+            }
+        })
     }
 
     static login = async ( email:string, password:string ) => {

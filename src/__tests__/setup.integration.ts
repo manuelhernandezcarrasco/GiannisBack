@@ -4,6 +4,7 @@ import { prisma } from '../db/index';
 
 beforeAll(() => {
   dotenv.config();
+  clearDB()
   //knex = setupDb();
 });
 
@@ -12,17 +13,17 @@ afterAll(() => {
 });
 
 beforeEach(() => {
-
+  clearDB()
 });
 
 
 export async function clearDB() {
   await Promise.all([
     prisma.burger.deleteMany(),
-    prisma.order.deleteMany(),
-    prisma.sale.deleteMany(),
+    prisma.user.deleteMany(),
     prisma.topping.deleteMany(),
     prisma.toppingOrder.deleteMany(),
-    prisma.user.deleteMany(),
+    prisma.order.deleteMany(),
+    prisma.sale.deleteMany(),
   ])
 }

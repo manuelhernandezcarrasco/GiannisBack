@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id       Int  @id @default(autoincrement())
+  id       String  @id @default(uuid())
   email    String  @unique
   name     String
   password String
@@ -36,7 +36,7 @@ model Topping {
 
 model Sale {
   id        Int @id @default(autoincrement())
-  userId    Int
+  userId    String
   orders    Order[] 
   total     Decimal @db.Money @default(0.0)
   accepted  Boolean? @default(false)
@@ -47,7 +47,7 @@ model Sale {
 model Order {
     id          Int @id @default(autoincrement())
     burgerId    Int
-    userId      Int
+    userId      String
     saleId      Int?
     sale        Sale? @relation(fields: [saleId], references: [id])
     toppings    ToppingOrder[]

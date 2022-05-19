@@ -3,7 +3,6 @@ import { BurgerService } from "../../burger"
 
 describe('burger', () => {
     it('create', async () => {
-        await clearDB()
         // setup
         const createdBurger = await BurgerService.create({
             name: "burger",
@@ -15,11 +14,11 @@ describe('burger', () => {
         // action
     
         // assert
+        await clearDB()
         expect(createdBurger).toBeTruthy()
     })
 
     it('remove', async () => {
-        await clearDB()
         // setup
         const createdBurger = await BurgerService.create({
             name: "burger",
@@ -33,11 +32,11 @@ describe('burger', () => {
         const burger = await BurgerService.find({name:"burger"})
     
         // assert
+        await clearDB()
         expect(burger).toBeFalsy()
     })
 
     it('update', async () => {
-        await clearDB()
         // setup
         const createdBurger = await BurgerService.create({
             name: "burger",
@@ -50,6 +49,7 @@ describe('burger', () => {
         const burger = await BurgerService.update({name:"burger"}, {price_veggie:100.0})
     
         // assert
+        await clearDB()
         expect(Number(burger.price_veggie)).toBe(100.0)
     })
     

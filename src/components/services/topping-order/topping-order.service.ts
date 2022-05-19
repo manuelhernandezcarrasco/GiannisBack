@@ -12,9 +12,8 @@ export class ToppingOrderService {
     static create = ( data: Omit<Prisma.ToppingOrderCreateInput, "order"> & {order:Order} ) => {
         const insertData = {
             ...data,
-            order: { connect: (order: { id: any; }) => { return {id:order.id} },
+            order: { connect: {id: data.order.id}}
             } 
-        }
         return prisma.toppingOrder.create({
             data: insertData,
         });
