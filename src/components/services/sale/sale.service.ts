@@ -1,5 +1,6 @@
 import { Order, Prisma } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
+import { DecipherCCM } from 'crypto';
 import { prisma } from '../../../db'
 
 export class SaleService {
@@ -34,9 +35,7 @@ export class SaleService {
     }
 
     static getTotal = (orders:Order[]) => {
-        let total:Decimal = undefined;
-        orders.map(order => total.add(order.orderPrice));
-        return total;
+        return orders.reduce((prev, cur) => prev + Number(cur.orderPrice), 0);;
     }
 
 }

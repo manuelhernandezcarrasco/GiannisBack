@@ -11,7 +11,7 @@ const router = express.Router();
 router.post('/', async(req, res) => {
    try {
        const { userId } = res.locals;
-       const { burgerId, orderPrice, saleId } = req.body;
+       const { burgerId, orderPrice } = req.body;
        
         OrderValidator.validateOrderCreateBody(userId, burgerId, orderPrice);
        const burger = await BurgerService.find(burgerId);
@@ -19,8 +19,7 @@ router.post('/', async(req, res) => {
            throw new NotFoundError('Burger was not found')
        }
 
-       const sale = await SaleService.find(saleId);
-       const order = await OrderService.create( { burgerId, userId, orderPrice, sale} );
+       const order = await OrderService.create( { burgerId, userId, orderPrice} );
        return res.status(201).json(order);
    }
    catch (e) {

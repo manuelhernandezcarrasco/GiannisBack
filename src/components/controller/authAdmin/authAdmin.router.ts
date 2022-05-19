@@ -30,10 +30,6 @@ router.patch('/create-admin', async(req, res) => {
 router.get('/show-sales', async(req, res) => {
     try {
         const sales = await SaleService.getSales();
-        if ( sales.length = 0) {
-            throw new NotFoundError('Sales not found');
-        }
-
         return res.status(200).json(sales);
 
     } catch (e) {

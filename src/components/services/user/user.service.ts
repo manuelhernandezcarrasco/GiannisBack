@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { BadRequestError, NotFoundError, UnauthenticatedError } from 'error';
 import { prisma } from '../../../db';
 import { hashPassword, validatePassword } from '../../../utils/password';
 import { generateAccessToken } from '../../../utils/token';
@@ -26,7 +27,7 @@ export class UserService {
         });
     }
 
-    static delete = ( where: Prisma.UserWhereUniqueInput ) => {
+    static remove = ( where: Prisma.UserWhereUniqueInput ) => {
         return prisma.user.delete({
             where,
         });
@@ -34,10 +35,10 @@ export class UserService {
 
     static login = async ( email:string, password:string ) => {
         const user = await this.find({ email });
-        if (!user) return false;
+        if (!user) throw new NotFoundError('User not found');
 
         const validated = await validatePassword(password, user.password);
-        if (!validated) return false;
+        if (!validated) throw new BadRequestError('Wrong password');
 
         delete user.password;
 

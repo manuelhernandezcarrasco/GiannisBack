@@ -10,9 +10,9 @@ router.post('/', async(req, res) => {
         const { userId } = res.locals;
         
         const orders = await OrderService.findMany({userId, active:true});
-        const total = await SaleService.getTotal(orders);
+        const total = SaleService.getTotal(orders);
         const sale = await SaleService.create( { userId, orders, total } );
-        await OrderService.updateMany(orders);
+        await OrderService.updateMany(orders, sale);
         return res.status(201).json(sale);
     }
     catch (e) {

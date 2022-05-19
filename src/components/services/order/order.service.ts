@@ -1,8 +1,10 @@
 import { Order, Prisma, Sale, ToppingOrder } from '@prisma/client';
 import { prisma } from '../../../db'
+import { SaleService } from '../sale';
 
 export class OrderService {
 
+    /*
     static create = ( data: Omit<Prisma.OrderCreateInput, "sale"> & {sale:Sale} ) => {
         const insetData = {
             ...data,
@@ -12,6 +14,12 @@ export class OrderService {
         return prisma.order.create({
             data: insetData,
         });
+    } */
+
+    static create = ( data: Prisma.OrderCreateInput) => {
+        return prisma.order.create({
+            data,
+        })
     }
 
     static find = ( where: Prisma.OrderWhereUniqueInput) => {
@@ -31,7 +39,20 @@ export class OrderService {
         });
     }
 
-    static updateMany = (orders:Order[]) => {
+    
+    // static updateSale = (where: Prisma.OrderWhereUniqueInput, data: Omit<Prisma.OrderUpdateInput, "sale"> & {sale:Sale}) => {
+    //     const insertData = {
+    //         ...data,
+    //         sale: { connect: {id: data.sale.id}}
+    //     }
+    //     return prisma.order.update({
+    //         where,
+    //         data: insertData,
+    //     })
+    // } 
+   
+
+    static updateMany = (orders:Order[], sale:Sale) => {
         return prisma.order.updateMany({
             where: {
                 id: { 
@@ -39,6 +60,7 @@ export class OrderService {
                 }
             },
             data: {
+                saleId: sale.id,
                 active: false,
             }
         });

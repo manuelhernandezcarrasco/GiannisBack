@@ -11,55 +11,55 @@ datasource db {
 }
 
 model User {
-  id   Int  @id @default(autoincrement())
-  email    String?  @unique
-  name     String?
-  password String?
-  phone    Int?
-  isAdmin  Boolean @default(false)
+  id       Int  @id @default(autoincrement())
+  email    String  @unique
+  name     String
+  password String
+  phone    Int
+  isAdmin  Boolean? @default(false)
 }
 
 model Burger {
-  id      Int  @id @default(autoincrement())
-  name          String? @unique
-  description   String
-  price_simple  Decimal @db.Money @default(-1)
-  price_double  Decimal @db.Money @default(-1)
-  price_veggie  Decimal @db.Money @default(-1)
+  id            Int  @id @default(autoincrement())
+  name          String @unique
+  description   String?
+  price_simple  Decimal? @db.Money @default(-1)
+  price_double  Decimal? @db.Money @default(-1)
+  price_veggie  Decimal? @db.Money @default(-1)
 }
 
 model Topping {
-  id Int @id @default(autoincrement())
-  name      String? @unique
+  id        Int @id @default(autoincrement())
+  name      String @unique
   price     Decimal @db.Money @default(0.0) 
 }
 
 model Sale {
-  id    Int @id @default(autoincrement())
-  userId    Int?
+  id        Int @id @default(autoincrement())
+  userId    Int
   orders    Order[] 
-  total     Decimal? @db.Money @default(0.0)
-  accepted  Boolean @default(false)
-  sent      Boolean @default(false)
-  received  Boolean @default(false)
+  total     Decimal @db.Money @default(0.0)
+  accepted  Boolean? @default(false)
+  sent      Boolean? @default(false)
+  received  Boolean? @default(false)
 }
 
 model Order {
-    id     Int @id @default(autoincrement())
-    burgerId    Int?
-    userId      Int?
-    saleId      Int
-    sale        Sale @relation(fields: [saleId], references: [id])
+    id          Int @id @default(autoincrement())
+    burgerId    Int
+    userId      Int
+    saleId      Int?
+    sale        Sale? @relation(fields: [saleId], references: [id])
     toppings    ToppingOrder[]
     orderPrice  Decimal @db.Money @default(0.0)
     active      Boolean @default(true)
 }
 
 model ToppingOrder {
-    id    Int @id @default(autoincrement())
-    toppingId         Int?
-    quantity          Int?
-    orderId           Int?
-    order             Order? @relation(fields: [orderId], references: [id])
+    id                Int @id @default(autoincrement())
+    toppingId         Int
+    quantity          Int
+    orderId           Int
+    order             Order @relation(fields: [orderId], references: [id])
     toppingOrderPrice Decimal @db.Money 
 }
