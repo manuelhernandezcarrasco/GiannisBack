@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,55 +8,62 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  email    String  @unique
-  name     String
-  password String
-  phone    Int
-  isAdmin  Boolean? @default(false)
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  password  String
+  phone     Int
+  isAdmin   Boolean? @default(false)
+  validated Boolean? @default(false)
+}
+
+model Validated {
+  id      String @id() @default(uuid())
+  code    String @unique @default(uuid())
+  userId  String
 }
 
 model Burger {
-  id            Int  @id @default(autoincrement())
-  name          String @unique
-  description   String?
-  price_simple  Decimal? @db.Money @default(-1)
-  price_double  Decimal? @db.Money @default(-1)
-  price_veggie  Decimal? @db.Money @default(-1)
+  id           String @id() @default(uuid())
+  name         String   @unique
+  description  String?
+  price_simple Decimal? @default(-1) @db.Money
+  price_double Decimal? @default(-1) @db.Money
+  price_veggie Decimal? @default(-1) @db.Money
 }
 
 model Topping {
-  id        Int @id @default(autoincrement())
-  name      String @unique
-  price     Decimal @db.Money @default(0.0) 
+  id    String @id() @default(uuid())
+  name  String  @unique
+  price Decimal @default(0.0) @db.Money
 }
 
 model Sale {
-  id        Int @id @default(autoincrement())
-  userId    String
-  orders    Order[] 
-  total     Decimal @db.Money @default(0.0)
-  accepted  Boolean? @default(false)
-  sent      Boolean? @default(false)
-  received  Boolean? @default(false)
+  id       String @id() @default(uuid())
+  userId   String
+  total    Decimal  @default(0.0) @db.Money
+  accepted Boolean? @default(false)
+  sent     Boolean? @default(false)
+  received Boolean? @default(false)
+  orders   Order[]
 }
 
 model Order {
-    id          Int @id @default(autoincrement())
-    burgerId    Int
-    userId      String
-    saleId      Int?
-    sale        Sale? @relation(fields: [saleId], references: [id])
-    toppings    ToppingOrder[]
-    orderPrice  Decimal @db.Money @default(0.0)
-    active      Boolean @default(true)
+  id         String @id() @default(uuid())
+  burgerId   String
+  userId     String
+  saleId     String?
+  orderPrice Decimal        @default(0.0) @db.Money
+  active     Boolean        @default(true)
+  sale       Sale?          @relation(fields: [saleId], references: [id])
+  toppings   ToppingOrder[]
 }
 
 model ToppingOrder {
-    id                Int @id @default(autoincrement())
-    toppingId         Int
-    quantity          Int
-    orderId           Int
-    order             Order @relation(fields: [orderId], references: [id])
-    toppingOrderPrice Decimal @db.Money 
+  id                String @id() @default(uuid())
+  toppingId         String
+  quantity          Int
+  orderId           String
+  toppingOrderPrice Decimal @db.Money
+  order             Order   @relation(fields: [orderId], references: [id])
 }

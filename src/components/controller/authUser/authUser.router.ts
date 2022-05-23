@@ -1,4 +1,4 @@
-import { InternalServerError, NotFoundError } from 'error';
+import { InternalServerError, NotFoundError } from '../../../error';
 import express from "express";
 import { UserValidator } from '../../../validate/user-validator';
 import {UserService} from "../../services/user";

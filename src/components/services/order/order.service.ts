@@ -1,6 +1,5 @@
 import { Order, Prisma, Sale, ToppingOrder } from '@prisma/client';
 import { prisma } from '../../../db'
-import { SaleService } from '../sale';
 
 export class OrderService {
 

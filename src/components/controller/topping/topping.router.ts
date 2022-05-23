@@ -1,4 +1,4 @@
-import { BadRequestError, InternalServerError, NotFoundError } from 'error';
+import { BadRequestError, InternalServerError, NotFoundError } from '../../../error';
 import express from 'express';
 import { ToppingService } from '../../services/topping';
 

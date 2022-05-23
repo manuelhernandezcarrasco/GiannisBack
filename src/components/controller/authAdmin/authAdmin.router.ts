@@ -1,7 +1,7 @@
 import express from "express";
 import {UserService} from "../../services/user";
 import {SaleService} from "../../services/sale";
-import { BadRequestError, InternalServerError, NotFoundError } from "error";
+import { BadRequestError, InternalServerError, NotFoundError } from "../../../error";
 import { Sale } from "@prisma/client";
 
 const router = express.Router();
@@ -37,7 +37,7 @@ router.get('/users/:limit', async(req, res) => {
 
         return res.status(200).json({
             result: users,
-            currentPage: Number(limit)%Number(skip),
+            currentPage: Number(skip)%Number(limit),
             maxPage: users.length%Number(limit)
         })
 
@@ -67,7 +67,7 @@ router.get('/sales/:limit', async(req, res) => {
 
         return res.status(200).json({
             result: sales,
-            currentPage: Number(limit)%Number(skip),
+            currentPage: Number(skip)%Number(limit),
             maxPage: sales.length%Number(pattern)
         });
 

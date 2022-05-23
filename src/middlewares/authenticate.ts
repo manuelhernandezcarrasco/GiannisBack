@@ -1,6 +1,6 @@
 import { validateAccessToken } from '../utils/token';
 import {UserService} from "../components/services/user";
-import { UnauthenticatedError, UnauthorizedError } from 'error';
+import { UnauthenticatedError, UnauthorizedError } from '../error';
 
 const withAuth = (req, res, next) => {
     const header = req.headers.authorization;

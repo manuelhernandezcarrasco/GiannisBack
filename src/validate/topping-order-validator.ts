@@ -1,5 +1,5 @@
 import { Decimal } from "@prisma/client/runtime";
-import { BadRequestError } from "error";
+import { BadRequestError } from "../error";
 
 export class ToppingOrderValidator {
 

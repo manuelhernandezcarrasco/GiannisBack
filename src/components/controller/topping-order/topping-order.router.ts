@@ -3,7 +3,7 @@ import { ToppingOrderService } from '../../services/topping-order';
 import {ToppingService} from "../../services/topping";
 import { ToppingOrderValidator } from '../../../validate/topping-order-validator';
 import { OrderService } from '../../../components/services/order';
-import { BadRequestError, InternalServerError, NotFoundError } from 'error';
+import { BadRequestError, InternalServerError, NotFoundError } from '../../../error';
 
 const router = express.Router();
 

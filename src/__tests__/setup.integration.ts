@@ -25,5 +25,6 @@ export async function clearDB() {
     prisma.toppingOrder.deleteMany(),
     prisma.order.deleteMany(),
     prisma.sale.deleteMany(),
+    prisma.validated.deleteMany(),
   ])
-}
+}  

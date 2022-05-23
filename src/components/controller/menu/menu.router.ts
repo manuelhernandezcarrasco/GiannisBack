@@ -1,7 +1,7 @@
 import { ToppingService } from '../../services/topping';
 import express from 'express';
 import {BurgerService} from '../../services/burger';
-import { InternalServerError, NotFoundError } from 'error';
+import { InternalServerError, NotFoundError } from '../../../error';
 import { Burger } from '@prisma/client';
 
 const router = express.Router();
@@ -21,9 +21,9 @@ router.get('/burgers/:limit', async(req, res) => {
 
         return res.status(200).json({
             result: burgers,
-            currentPage: Number(limit)%Number(skip),
+            currentPage: Number(skip)%Number(limit),
             maxPage: burgers.length%Number(limit)
-        });
+        });   
     }
     catch (e) {
         console.log(e);

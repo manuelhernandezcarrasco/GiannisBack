@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime';
 import { prisma } from '../../../db'
 
 export class BurgerService {

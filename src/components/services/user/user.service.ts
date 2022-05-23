@@ -1,8 +1,9 @@
 import { Prisma } from '@prisma/client';
-import { BadRequestError, NotFoundError, UnauthenticatedError } from 'error';
+import { BadRequestError, NotFoundError, UnauthenticatedError } from '../../../error';
 import { prisma } from '../../../db';
 import { hashPassword, validatePassword } from '../../../utils/password';
 import { generateAccessToken } from '../../../utils/token';
+import axios from 'axios';
 
 export class UserService {
 
@@ -57,6 +58,8 @@ export class UserService {
         const user = await this.find({ email });
         if (!user) throw new NotFoundError('User not found');
 
+        if(!user.validated) throw new UnauthenticatedError('User was not authenticated')
+
         const validated = await validatePassword(password, user.password);
         if (!validated) throw new BadRequestError('Wrong password');
 
@@ -65,4 +68,21 @@ export class UserService {
         const token = generateAccessToken( user.id );
         return { user, token };
     }
+
+    static isEmail = (email:string) => {
+        const reMail = /^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!\.)){0,61}[a-zA-Z0-9]?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!$)){0,61}[a-zA-Z0-9]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/
+        return email.match(reMail)
+    }
+
+    static sendMail = async(email:string, code:string) => {
+        await axios({
+            method: 'post',
+            url: process.env.MAIL_SERVICE_LINK,
+            data:{
+                email:email,
+                code:code
+            }
+          })
+    }
+
 }

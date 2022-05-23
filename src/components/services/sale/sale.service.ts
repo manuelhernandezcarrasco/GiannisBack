@@ -1,7 +1,5 @@
 import { Order, Prisma } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime';
-import { DecipherCCM, sign } from 'crypto';
-import { resourceLimits } from 'worker_threads';
 import { prisma } from '../../../db'
 
 export class SaleService {
@@ -22,7 +20,7 @@ export class SaleService {
         });
     }
 
-    static getSales = (id?:number, userId?:string, limit?:number, skip?:number) => {
+    static getSales = (id?:string, userId?:string, limit?:number, skip?:number) => {
         return prisma.sale.findMany({
             skip: skip,
             take:limit,

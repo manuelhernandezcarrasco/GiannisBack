@@ -1,4 +1,4 @@
-import { InternalServerError } from 'error';
+import { InternalServerError } from '../../../error';
 import express from 'express';
 import { OrderService } from '../../services/order/order.service';
 import {SaleService} from '../../services/sale';

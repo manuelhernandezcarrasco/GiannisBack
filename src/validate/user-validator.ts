@@ -1,4 +1,4 @@
-import { BadRequestError } from "error";
+import { BadRequestError } from "../error";
 
 export class UserValidator {
 
