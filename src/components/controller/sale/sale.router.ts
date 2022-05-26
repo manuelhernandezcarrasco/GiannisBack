@@ -5,6 +5,26 @@ import {SaleService} from '../../services/sale';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/sale:
+ *  post:
+ *      summary: "create sale"
+ *      tags:
+ *          - sale
+ *      description: create sale
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/sale"
+ *      responses:
+ *          '201':
+ *              description: creates sale and returns it
+ *      security:
+ *          - withAuth: []
+ */
+
 router.post('/', async(req, res) => {
     try {
         const { userId } = res.locals;

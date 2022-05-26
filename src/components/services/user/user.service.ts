@@ -69,20 +69,4 @@ export class UserService {
         return { user, token };
     }
 
-    static isEmail = (email:string) => {
-        const reMail = /^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!\.)){0,61}[a-zA-Z0-9]?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!$)){0,61}[a-zA-Z0-9]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/
-        return email.match(reMail)
-    }
-
-    static sendMail = async(email:string, code:string) => {
-        await axios({
-            method: 'post',
-            url: process.env.MAIL_SERVICE_LINK,
-            data:{
-                email:email,
-                code:code
-            }
-          })
-    }
-
 }

@@ -7,6 +7,30 @@ import { BadRequestError, InternalServerError, NotFoundError } from '../../../er
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/topping-order:
+ *  post:
+ *      summary: "create topping order"
+ *      tags:
+ *          - toppingOrder
+ *      description: creates a topping order 
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/toppingOrder"
+ *      responses:
+ *          '201':
+ *              description: creates topping order and returns it
+ *          '400':
+ *              description: missing fields or toppingOrder already exists
+ *          '401':
+ *              description: topping not found
+ *      security:
+ *          - withAuth: []
+ */
+
 router.post('/', async(req, res) => {
    try {
         const { toppingId, quantity, orderId, toppingOrderPrice } = req.body;
@@ -32,6 +56,30 @@ router.post('/', async(req, res) => {
    }
 });
 
+/**
+ * @swagger
+ * /api/topping-order:
+ *  put:
+ *      summary: "modify topping order"
+ *      tags:
+ *          - toppingOrder
+ *      description: modifys a topping order quantity and price
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/modifyToppingOrder"
+ *      responses:
+ *          '201':
+ *              description: modify topping order and returns it
+ *          '400':
+ *              description: missing fields or toppingOrder already exists
+ *          '401':
+ *              description: topping not found
+ *      security:
+ *          - withAuth: []
+ */
+
 router.put('/', async(req, res) => {
     try {
         const {toppingOrderId, quantity, toppingOrderPrice} = req.body;
@@ -51,6 +99,30 @@ router.put('/', async(req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/topping-order:
+ *  delete:
+ *      summary: "delete topping order"
+ *      tags:
+ *          - toppingOrder
+ *      description: delete a topping order
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/deleteToppingOrder"
+ *      responses:
+ *          '204':
+ *              description: removes topping order
+ *          '400':
+ *              description: bad requests missing fields
+ *          '401':
+ *              description: order not found
+ *      security:
+ *          - withAuth: []
+ */
+
 router.delete('/', async(req, res) => {
     try {
         const { toppingOrderId } = req.body;
@@ -60,7 +132,7 @@ router.delete('/', async(req, res) => {
 
         let toppingOrder = await ToppingOrderService.find(toppingOrderId);
         if (!toppingOrder) {
-            throw new NotFoundError('Order was not found');
+            throw new NotFoundError('Order  not found');
         }
 
         toppingOrder = await ToppingOrderService.remove(toppingOrderId);

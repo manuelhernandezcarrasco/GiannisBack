@@ -5,6 +5,30 @@ import {UserService} from "../../services/user";
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/auth-user:
+ *  patch:
+ *      summary: "patch user"
+ *      tags:
+ *          - authUser
+ *      description: patch a user attribute
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/patchUser"
+ *      responses:
+ *          '200':
+ *              description: changes user attribute and returns it
+ *          '400':
+ *              description: bad request missing fields
+ *          '401':
+ *              description: user not found
+ *      security:
+ *          - withAuth: []
+ */
+
 router.patch('/', async(req, res) => {
     try {
        const {id} = res.locals;

@@ -6,6 +6,19 @@ import { Burger } from '@prisma/client';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/menu/burgers:
+ *  get:
+ *      summary: "get burgers"
+ *      tags:
+ *          - menu
+ *      description: get burgers menu
+ *      responses:
+ *          '200':
+ *              description: returns paginated burgers
+ */
+
 router.get('/burgers/:limit', async(req, res) => {
     try {
         const { pattern, skip } = req.body;
@@ -31,6 +44,19 @@ router.get('/burgers/:limit', async(req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/menu/toppings:
+ *  get:
+ *      summary: "get toppings"
+ *      tags:
+ *          - menu
+ *      description: get toppings menu
+ *      responses:
+ *          '200':
+ *              description: returns paginated toppings
+ */
+
 router.get('/toppings', async(req, res) => {
     try {
         
@@ -43,6 +69,5 @@ router.get('/toppings', async(req, res) => {
         throw new InternalServerError();
     }
 });
-
 
 export { router };

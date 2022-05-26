@@ -13,23 +13,23 @@ model User {
   name      String
   password  String
   phone     Int
-  isAdmin   Boolean? @default(false)
-  validated Boolean? @default(false)
+  isAdmin   Boolean  @default(false)
+  validated Boolean  @default(false)
 }
 
-model Validated {
+model ConfirmUserToken {
   id      String @id() @default(uuid())
   code    String @unique @default(uuid())
   userId  String
 }
 
 model Burger {
-  id           String @id() @default(uuid())
+  id           String   @id() @default(uuid())
   name         String   @unique
   description  String?
-  price_simple Decimal? @default(-1) @db.Money
-  price_double Decimal? @default(-1) @db.Money
-  price_veggie Decimal? @default(-1) @db.Money
+  price_simple Decimal  @default(-1) @db.Money
+  price_double Decimal  @default(-1) @db.Money
+  price_veggie Decimal  @default(-1) @db.Money
 }
 
 model Topping {
@@ -42,9 +42,9 @@ model Sale {
   id       String @id() @default(uuid())
   userId   String
   total    Decimal  @default(0.0) @db.Money
-  accepted Boolean? @default(false)
-  sent     Boolean? @default(false)
-  received Boolean? @default(false)
+  accepted Boolean  @default(false)
+  sent     Boolean  @default(false)
+  received Boolean  @default(false)
   orders   Order[]
 }
 

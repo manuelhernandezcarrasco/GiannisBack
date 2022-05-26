@@ -7,6 +7,30 @@ import { BadRequestError, InternalServerError, NotFoundError } from '../../../er
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/order:
+ *  post:
+ *      summary: "create order"
+ *      tags:
+ *          - order
+ *      description: create an order for a user with userId
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/order"
+ *      responses:
+ *          '201':
+ *              description: create and return order
+ *          '400':
+ *              description: missing fields
+ *          '401':
+ *              description: burger not found
+ *      security:
+ *          - withAuth: []
+ */
+
 router.post('/', async(req, res) => {
    try {
        const { userId } = res.locals;
@@ -26,6 +50,30 @@ router.post('/', async(req, res) => {
        throw new InternalServerError();
    }
 });
+
+/**
+ * @swagger
+ * /api/order:
+ *  put:
+ *      summary: "edit order"
+ *      tags:
+ *          - order
+ *      description: edir an order toppings and price
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/modifyOrder"
+ *      responses:
+ *          '200':
+ *              description: changes order toppings and price and returns it
+ *          '400':
+ *              description: missing fields
+ *          '401':
+ *              description: order not found
+ *      security:
+ *          - withAuth: []
+ */
 
 router.put('/', async(req, res) => {
     try {
@@ -47,6 +95,30 @@ router.put('/', async(req, res) => {
     }
 
 });
+
+/**
+ * @swagger
+ * /api/order:
+ *  delete:
+ *      summary: "delete order"
+ *      tags:
+ *          - order
+ *      description: deletes an existing order
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/deleteOrder"
+ *      responses:
+ *          '204':
+ *              description: order is removed
+ *          '400':
+ *              description: missing fields
+ *          '401':
+ *              description: order not found
+ *      security:
+ *          - withAuth: []
+ */
 
 router.delete('/', async(req, res) => {
    try {

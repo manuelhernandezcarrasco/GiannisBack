@@ -4,6 +4,28 @@ import { ToppingService } from '../../services/topping';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/topping:
+ *  post:
+ *      summary: "create topping"
+ *      tags:
+ *          - topping
+ *      description: creates topping and returns it
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/topping"
+ *      responses:
+ *          '201':
+ *              description: create topping and returns it
+ *          '400':
+ *              description: bad request missing fields
+ *      security:
+ *          - withAuth: []
+ */
+
 router.post('/', async(req, res) => {
     try {
        const { name, price } = req.body;
@@ -19,6 +41,30 @@ router.post('/', async(req, res) => {
         throw new InternalServerError();
     }
 });
+
+/**
+ * @swagger
+ * /api/topping:
+ *  patch:
+ *      summary: "edit topping"
+ *      tags:
+ *          - topping
+ *      description: edit topping fields and returns new toppings
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/patchTopping"
+ *      responses:
+ *          '200':
+ *              description: edit topping and returns new topping
+ *          '400':
+ *              description: bad request missing fields
+ *          '404':
+ *              description: topping not found
+ *      security:
+ *          - withAuth: []
+ */
 
 router.patch('/', async(req, res) => {
     try {
@@ -41,6 +87,30 @@ router.patch('/', async(req, res) => {
         throw new InternalServerError();
     }
 });
+
+/**
+ * @swagger
+ * /api/topping:
+ *  delete:
+ *      summary: "delete topping"
+ *      tags:
+ *          - topping
+ *      description: delete a topping
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/deleteTopping"
+ *      responses:
+ *          '204':
+ *              description: removes a topping
+ *          '400':
+ *              description: bad request missing fields
+ *          '404':
+ *              description: topping not found
+ *      security:
+ *          - withAuth: []
+ */
 
 router.delete('/', async(req, res) => {
     try {

@@ -6,6 +6,30 @@ import { Sale } from "@prisma/client";
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/admin/create-admin:
+ *  patch:
+ *      summary: "creates admin"
+ *      tags:
+ *          - admin
+ *      description: makes a user admin
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/createAdmin"
+ *      responses:
+ *          '204':
+ *              description: makes a user admin
+ *          '400':
+ *              description: bad request missing fields
+ *          '404':
+ *              description: user not found
+ *      security:
+ *          - withAuth: []
+ */
+
 router.patch('/create-admin', async(req, res) => {
     try {
         const {userId} = req.body;
@@ -28,6 +52,26 @@ router.patch('/create-admin', async(req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/admin/users:
+ *  get:
+ *      summary: "gets users"
+ *      tags:
+ *          - admin
+ *      description: gets all users
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/getUsers"
+ *      responses:
+ *          '200':
+ *              description: returns paginated users
+ *      security:
+ *          - withAuth: []
+ */
+
 router.get('/users/:limit', async(req, res) => {
     try {
         const { limit } = req.params
@@ -46,6 +90,26 @@ router.get('/users/:limit', async(req, res) => {
         throw new InternalServerError()
     }
 })
+
+/**
+ * @swagger
+ * /api/admin/sales:
+ *  get:
+ *      summary: "gets sales"
+ *      tags:
+ *          - admin
+ *      description: gets all sales
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/getSales"
+ *      responses:
+ *          '200':
+ *              description: returns paginated sales
+ *      security:
+ *          - withAuth: []
+ */
 
 router.get('/sales/:limit', async(req, res) => {
     try {
@@ -77,6 +141,30 @@ router.get('/sales/:limit', async(req, res) => {
     }
 });
 
+ /**
+ * @swagger
+ * /api/admin/accept:
+ *  patch:
+ *      summary: "accept sale"
+ *      tags:
+ *          - admin
+ *      description: accept a sale
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/manageSale"
+ *      responses:
+ *          '200':
+ *              description: returns sale accepted
+ *          '400':
+ *              description: Bad request missing fields
+ *          '404':
+ *              description: Sale not found
+ *      security:
+ *          - withAuth: []
+ */
+
 router.patch('/accept', async(req, res) => {
     try {
         const { saleId } = req.body;
@@ -98,6 +186,30 @@ router.patch('/accept', async(req, res) => {
         throw new InternalServerError();
     }
  });
+
+/**
+ * @swagger
+ * /api/admin/send:
+ *  patch:
+ *      summary: "send sale"
+ *      tags:
+ *          - admin
+ *      description: send a sale
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/manageSale"
+ *      responses:
+ *          '200':
+ *              description: returns send accepted
+ *          '400':
+ *              description: Bad request missing fields
+ *          '404':
+ *              description: Sale not found
+ *      security:
+ *          - withAuth: []
+ */
 
  router.patch('/send', async(req, res) => {
     try {
@@ -121,6 +233,30 @@ router.patch('/accept', async(req, res) => {
     }
  });
 
+/**
+ *  @swagger
+ * /api/admin/received:
+ *  patch:
+ *      summary: "receive sale"
+ *      tags:
+ *          - admin
+ *      description: receive a sale
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/manageSale"
+ *      responses:
+ *          '200':
+ *              description: returns received accepted
+ *          '400':
+ *              description: Bad request missing fields
+ *          '404':
+ *              description: Sale not found
+ *      security:
+ *          - withAuth: []
+ */
+
  router.patch('/received', async(req, res) => {
     try {
         const { saleId } = req.body;
@@ -142,6 +278,5 @@ router.patch('/accept', async(req, res) => {
         throw new InternalServerError();
     }
  });
-
 
 export { router };
