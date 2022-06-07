@@ -2,9 +2,7 @@ import { ToppingService } from '../../services/topping';
 import express from 'express';
 import {BurgerService} from '../../services/burger';
 import { InternalServerError, NotFoundError } from '../../../error';
-import { Burger } from '@prisma/client';
 import { uploadImage } from '../../../s3';
-import { prisma } from 'db';
 
 const router = express.Router();
 
@@ -61,15 +59,5 @@ router.get('/toppings', async(req, res) => {
         throw new InternalServerError();
     }
 });
-
-router.post('/image', uploadImage, async(req,res, next) => {
-    try {
-        return res.status(200).json(req.file)
-    }
-    catch(e) {
-        console.log(e);
-        throw new InternalServerError();
-    }
-})
 
 export { router };

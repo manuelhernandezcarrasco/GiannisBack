@@ -2,7 +2,7 @@ import { BadRequestError, InternalServerError, NotFoundError } from '../../../er
 import express from 'express';
 import { BurgerValidator } from '../../../validate/burger-validator';
 import { BurgerService } from '../../services/burger';
-import { uploadImage } from 's3';
+import { uploadImage } from '../../../s3';
 
 const router = express.Router();
 
@@ -121,8 +121,8 @@ router.post('/', uploadImage, async(req, res) => {
    try {
 
         const { name, description, price_simple, price_double, price_veggie } = req.body;
-        
-        const image = res.locals.imageID
+    
+        const image = res.locals.image
 
        if (!name) {
            throw new BadRequestError('Missing fields');
