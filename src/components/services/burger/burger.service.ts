@@ -1,4 +1,5 @@
-import { Prisma } from '@prisma/client';
+import { Burger, Prisma } from '@prisma/client';
+import { Pattern } from 'aws-sdk/clients/lambda';
 import { prisma } from '../../../db'
 
 export class BurgerService {
@@ -28,26 +29,40 @@ export class BurgerService {
         });
     }
 
-    static getBurgers = (name?:string, description?:string, limit?:number, skip?: number) => {
-        return prisma.burger.findMany({
-            skip: skip,
-            take:limit,
-            where: { 
-                OR: [{
-                    name: {
-                        contains: name
-                    },
-                    description: {
-                        contains:description
-                    }
-                }]
-            }
-        });
+    static getBurgers = async({pattern, limit, skip} : { pattern?:string, limit:number, skip:number }) => {
+        let burgers:Burger[] = undefined
+        let length = 0
+        if(!skip) skip = 0
+        if(Number(pattern)) {
+            length = await prisma.burger.count()
+            if(!limit) limit = length
+            burgers = await this.getByPrice({price:Number(pattern), limit:limit, skip:skip})
+        }
+        else if(pattern){
+            length = await this.countByPattern({name:pattern, description:pattern})
+            if(!limit) limit = length
+            burgers = await this.getByPattern({ name:pattern, description:pattern, limit:limit, skip:skip});
+        }
+        else {
+            length = await this.countByPattern({name:pattern, description:pattern})
+            if(!limit) limit = length
+            burgers = await prisma.burger.findMany({
+                skip:skip,
+                take:limit
+            })
+        }
+
+        return {
+            result: burgers,
+            currentPage: Number(skip) / Number(limit),
+            maxPage: length / Number(limit)
+        } 
+        
     }
 
-    static getByPrice = (price?: number, limit?:number, skip?:number) => {
+    static getByPrice = async({price, limit, skip}: {price?: number, limit?:number, skip?:number}) => {
         return prisma.burger.findMany({
-            skip: skip,
+            skip:skip,
             take:-limit,
             orderBy: {
                 price_simple: 'asc',
@@ -70,9 +85,35 @@ export class BurgerService {
         })
     }
 
-    static findMany = ( where: Prisma.BurgerWhereInput ) => {
+    static countByPattern = async({name, description} : {name?:string, description?:string}) => {
+        return prisma.burger.count({
+            where: { 
+                OR: [{
+                    name: {
+                        contains: name
+                    },
+                   description: {
+                        contains: description
+                    }
+                }]
+            }    
+        })
+    }
+
+    static getByPattern = async({name, description, limit, skip}: {name?:string, description?:string, limit?:number, skip?:number}) => {
         return prisma.burger.findMany({
-            where,
+            skip: skip,
+            take:limit,
+            where: { 
+                OR: [{
+                    name: {
+                        contains: name
+                    },
+                    description: {
+                        contains:description
+                    }
+                }]
+            }
         });
     }
 

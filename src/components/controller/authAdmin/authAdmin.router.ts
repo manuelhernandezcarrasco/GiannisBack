@@ -2,7 +2,9 @@ import express from "express";
 import {UserService} from "../../services/user";
 import {SaleService} from "../../services/sale";
 import { BadRequestError, InternalServerError, NotFoundError } from "../../../error";
-import { Sale } from "@prisma/client";
+import { Sale, User } from "@prisma/client";
+import { prisma } from "db";
+import { Decimal } from "@prisma/client/runtime";
 
 const router = express.Router();
 
@@ -72,18 +74,14 @@ router.patch('/create-admin', async(req, res) => {
  *          - withAuth: []
  */
 
-router.get('/users/:limit', async(req, res) => {
+router.get('/users', async(req, res) => {
     try {
-        const { limit } = req.params
-        const { pattern, skip } = req.body
+        const { pattern } = req.query
+        let { limit, skip } = req.query
 
-        const users = await UserService.getUsers(pattern, pattern, pattern, Number(limit), Number(skip))
+        const users = await UserService.getUsers({pattern:String(pattern), limit:Number(limit), skip:Number(skip)})
 
-        return res.status(200).json({
-            result: users,
-            currentPage: Number(skip)%Number(limit),
-            maxPage: users.length%Number(limit)
-        })
+        return res.status(200).json(users)
 
     } catch (e) {
         console.log(e)
@@ -111,29 +109,14 @@ router.get('/users/:limit', async(req, res) => {
  *          - withAuth: []
  */
 
-router.get('/sales/:limit', async(req, res) => {
+router.get('/sales', async(req, res) => {
     try {
-        const { limit } = req.params
-        const { pattern, skip, accepted, sent, received, sort} = req.body
+        const { pattern, sort, accepted, sent, received } = req.query
+        let { limit, skip } = req.query
         
-        let sales:Sale[] = undefined
-        if (accepted || sent || received) {
-            sales = await SaleService.getSalesByState(accepted, sent, received, Number(limit), Number(skip))
-        } if (Number(pattern)) {
-            if(sort) {
-                sales = await SaleService.getGreaterSales(pattern, Number(limit), Number(skip))
-            } else {
-                sales = await SaleService.getSmallerSales(pattern, Number(limit), Number(skip))
-            }
-        } else {
-            sales = await SaleService.getSales(pattern, pattern, Number(limit), Number(skip))
-        }
+        const sales = await SaleService.getSales({pattern:String(pattern), sort:Boolean(sort), accepted:Boolean(accepted), sent:Boolean(sent), received:Boolean(received)})
 
-        return res.status(200).json({
-            result: sales,
-            currentPage: Number(skip)%Number(limit),
-            maxPage: sales.length%Number(pattern)
-        });
+        return res.status(200).json(sales);
 
     } catch (e) {
         console.log(e);

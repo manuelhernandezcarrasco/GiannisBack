@@ -3,6 +3,8 @@ import express from 'express';
 import {BurgerService} from '../../services/burger';
 import { InternalServerError, NotFoundError } from '../../../error';
 import { Burger } from '@prisma/client';
+import { uploadImage } from '../../../s3';
+import { prisma } from 'db';
 
 const router = express.Router();
 
@@ -19,24 +21,14 @@ const router = express.Router();
  *              description: returns paginated burgers
  */
 
-router.get('/burgers/:limit', async(req, res) => {
+router.get('/burgers', async(req, res) => {
     try {
-        const { pattern, skip } = req.body;
-        const { limit } = req.params;
+        const { pattern } = req.query
+        let { limit, skip } = req.query;
         
-        let burgers:Burger[] = undefined
-        if(Number(pattern)) {
-            burgers = await BurgerService.getByPrice(pattern, Number(limit), Number(skip))
-        }
-        else {
-            burgers = await BurgerService.getBurgers(pattern, pattern, Number(limit), Number(skip));
-        }
+        const burgers = await BurgerService.getBurgers({ pattern:String(pattern), limit:Number(limit), skip:Number(skip) })
 
-        return res.status(200).json({
-            result: burgers,
-            currentPage: Number(skip)%Number(limit),
-            maxPage: burgers.length%Number(limit)
-        });   
+        return res.status(200).json(burgers);   
     }
     catch (e) {
         console.log(e);
@@ -60,7 +52,7 @@ router.get('/burgers/:limit', async(req, res) => {
 router.get('/toppings', async(req, res) => {
     try {
         
-        const toppings = await ToppingService.getToppings();
+        const toppings = ToppingService.getToppings();
     
         return res.status(200).json(toppings);
     }
@@ -69,5 +61,15 @@ router.get('/toppings', async(req, res) => {
         throw new InternalServerError();
     }
 });
+
+router.post('/image', uploadImage, async(req,res, next) => {
+    try {
+        return res.status(200).json(req.file)
+    }
+    catch(e) {
+        console.log(e);
+        throw new InternalServerError();
+    }
+})
 
 export { router };

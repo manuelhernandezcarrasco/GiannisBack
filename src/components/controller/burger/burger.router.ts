@@ -2,6 +2,7 @@ import { BadRequestError, InternalServerError, NotFoundError } from '../../../er
 import express from 'express';
 import { BurgerValidator } from '../../../validate/burger-validator';
 import { BurgerService } from '../../services/burger';
+import { uploadImage } from 's3';
 
 const router = express.Router();
 
@@ -116,16 +117,19 @@ router.delete('/', async(req, res) => {
  *          - withAuth: []
  */
 
-router.post('/', async(req, res) => {
+router.post('/', uploadImage, async(req, res) => {
    try {
+
         const { name, description, price_simple, price_double, price_veggie } = req.body;
+        
+        const image = res.locals.imageID
 
        if (!name) {
            throw new BadRequestError('Missing fields');
        }
 
-       const burger = await BurgerService.create({ name, description, price_simple, price_double, price_veggie});
-       return res.status(201).json(burger);
+       const burger = await BurgerService.create({ name, description, price_simple, price_double, price_veggie, image});
+       return res.status(201).json({burger, file: req.file});
    }
    catch (e) {
        console.log(e);

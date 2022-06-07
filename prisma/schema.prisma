@@ -30,6 +30,7 @@ model Burger {
   price_simple Decimal  @default(-1) @db.Money
   price_double Decimal  @default(-1) @db.Money
   price_veggie Decimal  @default(-1) @db.Money
+  image        String?
 }
 
 model Topping {
