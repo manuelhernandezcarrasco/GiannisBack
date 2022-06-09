@@ -1,0 +1,145 @@
+import express from 'express';
+import { OrderService } from '../../services/order';
+import {BurgerService} from '../../services/burger';
+import { ToppingOrderService } from '../../../components/services/topping-order';
+import { OrderValidator } from '../../../validate/order-validator';
+import { BadRequestError, InternalServerError, NotFoundError } from '../../../error';
+
+const router = express.Router();
+
+/**
+ * @swagger
+ * /api/order:
+ *  post:
+ *      summary: "create order"
+ *      tags:
+ *          - order
+ *      description: create an order for a user with userId
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/order"
+ *      responses:
+ *          '201':
+ *              description: create and return order
+ *          '400':
+ *              description: missing fields
+ *          '401':
+ *              description: burger not found
+ *      security:
+ *          - withAuth: []
+ */
+
+router.post('/', async(req, res) => {
+   try {
+       const { userId } = res.locals;
+       const { burgerId, orderPrice } = req.body;
+       
+        OrderValidator.validateOrderCreateBody(userId, burgerId, orderPrice);
+       const burger = await BurgerService.find(burgerId);
+       if (!burger) {
+           throw new NotFoundError('Burger was not found')
+       }
+
+       const order = await OrderService.create( { burgerId, userId, orderPrice} );
+       return res.status(201).json(order);
+   }
+   catch (e) {
+       console.log(e);
+       throw new InternalServerError();
+   }
+});
+
+/**
+ * @swagger
+ * /api/order:
+ *  put:
+ *      summary: "edit order"
+ *      tags:
+ *          - order
+ *      description: edir an order toppings and price
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/modifyOrder"
+ *      responses:
+ *          '200':
+ *              description: changes order toppings and price and returns it
+ *          '400':
+ *              description: missing fields
+ *          '401':
+ *              description: order not found
+ *      security:
+ *          - withAuth: []
+ */
+
+router.put('/', async(req, res) => {
+    try {
+        const { orderId, orderPrice } = req.body;
+
+        OrderValidator.validateOrderUpdateBody(orderId, orderPrice);
+        let order = OrderService.find(orderId);
+        if (!order) {
+            throw new NotFoundError('Order was not found');
+        }
+
+        const toppings = await ToppingOrderService.findMany(orderId);
+        order = OrderService.update(orderId, { toppings, orderPrice} );
+        return res.status(200).json(order);
+    }
+    catch (e) {
+        console.log(e);
+        throw new InternalServerError();
+    }
+
+});
+
+/**
+ * @swagger
+ * /api/order:
+ *  delete:
+ *      summary: "delete order"
+ *      tags:
+ *          - order
+ *      description: deletes an existing order
+ *      requestBody:
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: "#/components/schemas/deleteOrder"
+ *      responses:
+ *          '204':
+ *              description: order is removed
+ *          '400':
+ *              description: missing fields
+ *          '401':
+ *              description: order not found
+ *      security:
+ *          - withAuth: []
+ */
+
+router.delete('/', async(req, res) => {
+   try {
+       const {orderId}  = req.body;
+
+       if (!orderId) {
+           throw new BadRequestError('Missing fields');
+       }
+
+       let order = await OrderService.find(orderId);
+       if (!order) {
+           throw new NotFoundError('Order not found');
+       }
+
+       order = await OrderService.remove(orderId);
+       return res.status(204);
+   }
+   catch (e) {
+       console.log(e);
+       throw new InternalServerError();
+   }
+});
+
+export { router };
